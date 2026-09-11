@@ -1,0 +1,8 @@
+﻿# Pyhton
+venv/
+__pycache__/
+*.pyc
+# Environment variables
+.env
+#Temp files
+Backend/app/temp_files/*
