@@ -19,6 +19,10 @@ from app.services.pdf_service.rotate import rotate_pdf
 from app.services.pdf_service.watermark import add_watermark
 from app.services.pdf_service.protect import protect_pdf, unlock_pdf
 from app.services.pdf_service.page_numbers import add_page_numbers
+from app.services.pdf_service.remove_blank import remove_blank_pages
+from app.services.pdf_service.extract_pages import extract_pages
+from app.services.pdf_service.reorder_pages import reorder_pages
+from app.services.pdf_service.crop import crop_pdf
 
 router = APIRouter(prefix="/api/pdf", tags=["PDF Tools"])
 
@@ -198,3 +202,79 @@ async def page_numbers_endpoint(
         raise HTTPException(status_code=400, detail=str(e))
 
     return FileResponse(output_path, media_type="application/pdf", filename="numbered.pdf")
+
+
+@router.post("/remove-blank-pages")
+async def remove_blank_pages_endpoint(file: UploadFile = File(...)):
+    saved_path = save_upload(file)
+
+    try:
+        output_path, removed_pages = remove_blank_pages(saved_path)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    headers = {"X-Removed-Pages": ",".join(str(p) for p in removed_pages)}
+    return FileResponse(
+        output_path,
+        media_type="application/pdf",
+        filename="no_blanks.pdf",
+        headers=headers,
+    )
+
+
+@router.post("/extract-pages")
+async def extract_pages_endpoint(
+    file: UploadFile = File(...),
+    pages: str = Form(...),  # e.g. "3,1,5" — order matters
+):
+    saved_path = save_upload(file)
+
+    try:
+        page_list = [int(p.strip()) for p in pages.split(",")]
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid pages format. Use e.g. '3,1,5'.")
+
+    try:
+        output_path = extract_pages(saved_path, page_list)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return FileResponse(output_path, media_type="application/pdf", filename="extracted.pdf")
+
+
+@router.post("/reorder-pages")
+async def reorder_pages_endpoint(
+    file: UploadFile = File(...),
+    new_order: str = Form(...),  # e.g. "3,1,2" — must include every page exactly once
+):
+    saved_path = save_upload(file)
+
+    try:
+        order_list = [int(p.strip()) for p in new_order.split(",")]
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid order format. Use e.g. '3,1,2'.")
+
+    try:
+        output_path = reorder_pages(saved_path, order_list)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return FileResponse(output_path, media_type="application/pdf", filename="reordered.pdf")
+
+
+@router.post("/crop")
+async def crop_endpoint(
+    file: UploadFile = File(...),
+    left: float = Form(0),
+    bottom: float = Form(0),
+    right: float = Form(0),
+    top: float = Form(0),
+):
+    saved_path = save_upload(file)
+
+    try:
+        output_path = crop_pdf(saved_path, left, bottom, right, top)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return FileResponse(output_path, media_type="application/pdf", filename="cropped.pdf")
