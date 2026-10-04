@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Environment variables
 .env
 .env.*
@@ -16,3 +17,13 @@ __pycache__/
 # IDE
 .vscode/
 .idea/
+=======
+﻿# Pyhton
+venv/
+__pycache__/
+*.pyc
+# Environment variables
+.env
+#Temp files
+Backend/app/temp_files/*
+>>>>>>> 94848701ea11fa33172d37e508825d02b4232ad5
