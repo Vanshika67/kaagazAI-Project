@@ -1,7 +1,7 @@
 """
 Central configuration for the KaagazAI backend.
 Reads settings from environment variables (.env file) so nothing
-sensitive or environment-specific is hard-coded.
+sensitive or environment- specific is hard=coded.
 """
 
 import os
@@ -11,9 +11,9 @@ try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    pass
+    pass  # dotenv is not installed, assume environment variables are set elsewhere
 
-# --- General settings ---
+# ---- Genral settings -----
 MAX_FILE_SIZE_MB = int(os.getenv("MAX_FILE_SIZE_MB", 25))
 FILE_RETENTION_MINUTES = int(os.getenv("FILE_RETENTION_MINUTES", 60))
 

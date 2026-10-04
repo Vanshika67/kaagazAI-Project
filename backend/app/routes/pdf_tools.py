@@ -23,13 +23,6 @@ from app.services.pdf_service.remove_blank import remove_blank_pages
 from app.services.pdf_service.extract_pages import extract_pages
 from app.services.pdf_service.reorder_pages import reorder_pages
 from app.services.pdf_service.crop import crop_pdf
-from app.services.pdf_service.repair import repair_pdf
-from app.services.pdf_service.ocr import ocr_pdf
-from app.services.pdf_service.compare import compare_pdfs
-from app.services.pdf_service.redact import redact_pdf
-from app.services.pdf_service.sign import sign_pdf
-from app.services.pdf_service.forms import get_form_fields, fill_form
-
 
 router = APIRouter(prefix="/api/pdf", tags=["PDF Tools"])
 
@@ -51,7 +44,7 @@ async def merge_endpoint(files: List[UploadFile] = File(...)):
 @router.post("/split")
 async def split_endpoint(
     file: UploadFile = File(...),
-    ranges: str = Form(None),  # e.g. "1-3,4-4,5-7"
+    ranges: str = Form(None),
 ):
     saved_path = save_upload(file)
 
@@ -96,7 +89,7 @@ async def insert_page_endpoint(
 @router.post("/delete-pages")
 async def delete_pages_endpoint(
     file: UploadFile = File(...),
-    pages: str = Form(...),  # e.g. "2,5,7"
+    pages: str = Form(...),
 ):
     saved_path = save_upload(file)
 
@@ -127,11 +120,12 @@ async def compress_endpoint(
 
     return FileResponse(output_path, media_type="application/pdf", filename="compressed.pdf")
 
+
 @router.post("/rotate")
 async def rotate_endpoint(
     file: UploadFile = File(...),
     angle: int = Form(...),
-    pages: str = Form(None),  # e.g. "1,3,5" — leave empty to rotate all pages
+    pages: str = Form(None),
 ):
     saved_path = save_upload(file)
 
@@ -198,7 +192,7 @@ async def unlock_endpoint(
 @router.post("/add-page-numbers")
 async def page_numbers_endpoint(
     file: UploadFile = File(...),
-    position: str = Form("bottom-center"),  # bottom-center | bottom-right | bottom-left
+    position: str = Form("bottom-center"),
 ):
     saved_path = save_upload(file)
 
@@ -208,6 +202,7 @@ async def page_numbers_endpoint(
         raise HTTPException(status_code=400, detail=str(e))
 
     return FileResponse(output_path, media_type="application/pdf", filename="numbered.pdf")
+
 
 @router.post("/remove-blank-pages")
 async def remove_blank_pages_endpoint(file: UploadFile = File(...)):
@@ -225,6 +220,7 @@ async def remove_blank_pages_endpoint(file: UploadFile = File(...)):
         filename="no_blanks.pdf",
         headers=headers,
     )
+
 
 @router.post("/extract-pages")
 async def extract_pages_endpoint(
@@ -282,110 +278,3 @@ async def crop_endpoint(
         raise HTTPException(status_code=400, detail=str(e))
 
     return FileResponse(output_path, media_type="application/pdf", filename="cropped.pdf")
-
-
-@router.post("/repair")
-async def repair_endpoint(file: UploadFile = File(...)):
-    saved_path = save_upload(file)
-
-    try:
-        output_path = repair_pdf(saved_path)
-    except RuntimeError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    return FileResponse(output_path, media_type="application/pdf", filename="repaired.pdf")
-
-
-@router.post("/ocr")
-async def ocr_endpoint(
-    file: UploadFile = File(...),
-    language: str = Form("eng"),
-):
-    saved_path = save_upload(file)
-
-    try:
-        output_path = ocr_pdf(saved_path, language)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-    return FileResponse(output_path, media_type="application/pdf", filename="ocr.pdf")
-
-
-@router.post("/compare")
-async def compare_endpoint(
-    file_a: UploadFile = File(...),
-    file_b: UploadFile = File(...),
-):
-    path_a = save_upload(file_a)
-    path_b = save_upload(file_b)
-
-    try:
-        report = compare_pdfs(path_a, path_b)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-    return {"diff_report": report}
-
-
-@router.post("/redact")
-async def redact_endpoint(
-    file: UploadFile = File(...),
-    search_text: str = Form(...),
-):
-    saved_path = save_upload(file)
-
-    try:
-        output_path = redact_pdf(saved_path, search_text)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    return FileResponse(output_path, media_type="application/pdf", filename="redacted.pdf")
-
-
-@router.post("/sign")
-async def sign_endpoint(
-    pdf_file: UploadFile = File(...),
-    signature_image: UploadFile = File(...),
-    page_number: int = Form(-1),
-    position: str = Form("bottom-right"),
-):
-    from app.routes.convert_tools import _save_any_upload
-
-    pdf_path = save_upload(pdf_file)
-    signature_path = _save_any_upload(signature_image)
-
-    try:
-        output_path = sign_pdf(pdf_path, signature_path, page_number, position)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    return FileResponse(output_path, media_type="application/pdf", filename="signed.pdf")
-
-
-@router.post("/form-fields")
-async def form_fields_endpoint(file: UploadFile = File(...)):
-    saved_path = save_upload(file)
-    fields = get_form_fields(saved_path)
-    return {"fields": fields}
-
-
-@router.post("/fill-form")
-async def fill_form_endpoint(
-    file: UploadFile = File(...),
-    field_values: str = Form(...),  # JSON string, e.g. '{"name": "John", "date": "2026-09-15"}'
-):
-    import json
-
-    saved_path = save_upload(file)
-
-    try:
-        values = json.loads(field_values)
-    except Exception:
-        raise HTTPException(status_code=400, detail="field_values must be valid JSON.")
-
-    try:
-        output_path = fill_form(saved_path, values)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    return FileResponse(output_path, media_type="application/pdf", filename="filled_form.pdf")
