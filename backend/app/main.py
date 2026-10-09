@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import FRONTEND_ORIGIN, FILE_RETENTION_MINUTES
 from app.utils.file_handler import cleanup_old_files
-from app.routes import pdf_tools
+from app.routes import pdf_tools, convert_tools, workflow,page_manager_routes
 
 
 async def periodic_cleanup():
@@ -46,6 +46,10 @@ app.add_middleware(
 )
 
 app.include_router(pdf_tools.router)
+app.include_router(convert_tools.router)
+app.include_router(workflow.router)
+app.include_router(page_manager_routes.router)
+
 
 
 @app.get("/")
@@ -56,3 +60,10 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+    ...

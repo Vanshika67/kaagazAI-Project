@@ -23,6 +23,8 @@ from app.services.pdf_service.remove_blank import remove_blank_pages
 from app.services.pdf_service.extract_pages import extract_pages
 from app.services.pdf_service.reorder_pages import reorder_pages
 from app.services.pdf_service.crop import crop_pdf
+from app.services.pdf_service.edit import add_text_to_pdf
+
 
 router = APIRouter(prefix="/api/pdf", tags=["PDF Tools"])
 
@@ -278,3 +280,21 @@ async def crop_endpoint(
         raise HTTPException(status_code=400, detail=str(e))
 
     return FileResponse(output_path, media_type="application/pdf", filename="cropped.pdf")
+
+@router.post("/edit-add-text")
+async def edit_add_text_endpoint(
+    file: UploadFile = File(...),
+    page_number: int = Form(...),
+    text: str = Form(...),
+    x: float = Form(...),
+    y: float = Form(...),
+    font_size: float = Form(12),
+):
+    saved_path = save_upload(file)
+
+    try:
+        output_path = add_text_to_pdf(saved_path, page_number, text, x, y, font_size)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return FileResponse(output_path, media_type="application/pdf", filename="edited.pdf")
