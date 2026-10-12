@@ -1,29 +1,31 @@
-<<<<<<< HEAD
-# Environment variables
+
+# Environment variables and secrets
 .env
 .env.*
+!.env.example
 
-# Python virtual environment
+# Python virtual environments
 venv/
 .venv/
 
 # Python cache
 __pycache__/
-*.pyc
-
-# Testing
+*.py[cod]
 .pytest_cache/
 
-# IDE
+# Node.js dependencies
+node_modules/
+
+# Frontend build
+dist/
+
+# IDE settings
 .vscode/
 .idea/
-=======
-﻿# Pyhton
-venv/
-__pycache__/
-*.pyc
-# Environment variables
-.env
-#Temp files
+
+# Logs
+*.log
+
+# Temporary files
+backend/app/temp_files/*
 Backend/app/temp_files/*
->>>>>>> 94848701ea11fa33172d37e508825d02b4232ad5

@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* floating animation used by the glowing background blobs */
+@theme {
+  --animate-float: float 9s ease-in-out infinite;
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-24px) scale(1.06); }
+  }
+}
+
+body {
+  @apply bg-slate-100 text-slate-800 antialiased;
+}
+
+/* faint grid pattern that fades out towards the edges */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float { animation: none; }
+}
