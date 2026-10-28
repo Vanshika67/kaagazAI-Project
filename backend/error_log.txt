@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "C:\Users\hp\Documents\Kaagaz AI\backend\app\routes\pdf_tools.py", line 54, in merge_endpoint
+    normalized_paths = normalize_many_to_pdf(saved_paths)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\Documents\Kaagaz AI\backend\app\utils\format_wrapper.py", line 71, in normalize_many_to_pdf
+    return [normalize_to_pdf(fp) for fp in file_paths]
+            ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\Documents\Kaagaz AI\backend\app\utils\format_wrapper.py", line 64, in normalize_to_pdf
+    if is_word_file(file_path):
+       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hp\Documents\Kaagaz AI\backend\app\utils\format_wrapper.py", line 32, in is_word_file
+    return file_path.lower().endswith(WORD_EXTENSIONS)
+           ^^^^^^^^^^^^^^^
+AttributeError: 'WindowsPath' object has no attribute 'lower'. Did you mean: 'owner'?
