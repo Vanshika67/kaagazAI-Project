@@ -12,7 +12,6 @@ from app.config import TEMP_DIR
 
 ALLOWED_EXTENSIONS = {".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt"}
 
-# Common LibreOffice install locations on Windows
 _SOFFICE_FALLBACK_PATHS = (
     r"C:\Program Files\LibreOffice\program\soffice.exe",
     r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
@@ -20,7 +19,6 @@ _SOFFICE_FALLBACK_PATHS = (
 
 
 def find_soffice() -> str:
-    """Find the LibreOffice executable, even if it is not in PATH."""
     exe = shutil.which("soffice") or shutil.which("libreoffice")
     if exe:
         return exe
@@ -45,8 +43,6 @@ def office_to_pdf(input_path: Path) -> Path:
         )
 
     soffice = find_soffice()
-
-    # Separate profile folder so a running/locked LibreOffice doesn't block us
     profile_dir = tempfile.mkdtemp(prefix="lo_profile_")
     profile_uri = Path(profile_dir).as_uri()
 
@@ -60,9 +56,7 @@ def office_to_pdf(input_path: Path) -> Path:
     ]
 
     try:
-        result = subprocess.run(
-            command, capture_output=True, text=True, timeout=180
-        )
+        result = subprocess.run(command, capture_output=True, text=True, timeout=180)
     except subprocess.TimeoutExpired:
         raise RuntimeError("LibreOffice took too long to convert the file.")
     finally:
@@ -71,9 +65,7 @@ def office_to_pdf(input_path: Path) -> Path:
     expected_output = out_dir / (input_path.stem + ".pdf")
 
     if result.returncode != 0:
-        raise RuntimeError(
-            f"LibreOffice conversion failed: {result.stderr or result.stdout}"
-        )
+        raise RuntimeError(f"LibreOffice conversion failed: {result.stderr or result.stdout}")
     if not expected_output.exists():
         raise RuntimeError("Conversion completed but the output PDF was not found.")
 

@@ -17,6 +17,14 @@ from app.config import FRONTEND_ORIGIN, FILE_RETENTION_MINUTES
 from app.utils.file_handler import cleanup_old_files
 from app.routes import pdf_tools, convert_tools, workflow, page_manager_routes
 from app.routes import new_tools
+from app.routes import office_tools
+from app.routes import password_recovery
+from app.routes import label_organize
+from app.routes import resume_builder
+from app.routes.extra_tools import router as extra_router
+from app.routes.bulk_tools import router as bulk_router
+from app.routes import handwriting
+from app.routes import ai_draft
 
 
 async def periodic_cleanup():
@@ -69,7 +77,14 @@ app.include_router(convert_tools.router)
 app.include_router(workflow.router)
 app.include_router(page_manager_routes.router)
 app.include_router(new_tools.router, prefix="/api")
-
+app.include_router(office_tools.router, prefix="/api")
+app.include_router(password_recovery.router, prefix="/api")
+app.include_router(label_organize.router, prefix="/api")
+app.include_router(resume_builder.router, prefix="/api")
+app.include_router(extra_router, prefix="/api")
+app.include_router(bulk_router, prefix="/api")
+app.include_router(handwriting.router, prefix="/api")
+app.include_router(ai_draft.router, prefix="/api")
 
 @app.get("/")
 async def root():

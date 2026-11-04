@@ -1,4 +1,4 @@
-/**
+﻿/**
  * theme.js - the colour palettes used across the dashboard.
  *
  * Class names are written out in full on purpose: Tailwind only creates
@@ -64,6 +64,8 @@ export const CATEGORY_THEME = {
   optimize: "yellow",
   security: "rose",
   edit: "violet",
+  ai: "fuchsia",
 };
 
 export const themeForCategory = (categoryId) => THEMES[CATEGORY_THEME[categoryId] ?? "blue"];
+

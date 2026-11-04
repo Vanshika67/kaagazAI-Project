@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import FileDropzone from "../components/FileDropzone";
 import ResultPanel from "../components/ResultPanel";
 import { runTool } from "../api/apiClient";
@@ -10,15 +10,20 @@ import { themeForCategory } from "../config/theme";
 const inputClass =
   "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200";
 
-function initialValues(tool) {
+// CHANGE 1: ab ye URL params (?template_style=modern) bhi leta hai
+function initialValues(tool, params) {
   const values = {};
-  tool.fields.forEach((f) => { values[f.name] = f.type === "file" ? [] : f.default ?? ""; });
+  tool.fields.forEach((f) => {
+    values[f.name] = f.type === "file" ? [] : params.get(f.name) ?? f.default ?? "";
+  });
   return values;
 }
 
 /** One generic page that builds its form from the tool's config. */
 function ToolForm({ tool }) {
-  const [values, setValues] = useState(() => initialValues(tool));
+  // CHANGE 2: searchParams yahan, ToolForm ke andar sabse upar
+  const [searchParams] = useSearchParams();
+  const [values, setValues] = useState(() => initialValues(tool, searchParams));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
@@ -86,6 +91,8 @@ function ToolForm({ tool }) {
 
 export default function ToolPage() {
   const { id } = useParams();
+  // CHANGE 3: ToolPage ke andar, `if (!tool)` se PEHLE
+  const [sp] = useSearchParams();
   const tool = getTool(id);
 
   if (!tool) {
@@ -96,6 +103,6 @@ export default function ToolPage() {
       </div>
     );
   }
-  // key={id} resets the form whenever the user opens a different tool
-  return <ToolForm key={tool.id} tool={tool} />;
+  // key mein sp daalne se Simple <-> Modern badalne par form reset hota hai
+  return <ToolForm key={tool.id + sp.toString()} tool={tool} />;
 }
