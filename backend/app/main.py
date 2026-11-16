@@ -1,5 +1,5 @@
-"""
-KaagazAI Backend — main entry point.
+﻿"""
+KaagazAI Backend â€” main entry point.
 
 Run with:
     uvicorn app.main:app --reload
@@ -13,7 +13,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.config import FRONTEND_ORIGIN, FILE_RETENTION_MINUTES
+from app.config import FILE_RETENTION_MINUTES
 from app.utils.file_handler import cleanup_old_files
 from app.routes import pdf_tools, convert_tools, workflow, page_manager_routes
 from app.routes import new_tools
@@ -48,16 +48,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS: Vite ka default port, localhost aur 127.0.0.1 dono
+# CORS: localhost / 127.0.0.1 ke kisi bhi port se allow
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
 
 
@@ -85,6 +83,7 @@ app.include_router(extra_router, prefix="/api")
 app.include_router(bulk_router, prefix="/api")
 app.include_router(handwriting.router, prefix="/api")
 app.include_router(ai_draft.router, prefix="/api")
+
 
 @app.get("/")
 async def root():

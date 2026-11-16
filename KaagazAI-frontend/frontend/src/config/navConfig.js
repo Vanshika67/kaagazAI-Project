@@ -1,7 +1,9 @@
+import { COMING_SOON } from "./comingSoon";
+
 export const NAV_SECTIONS = [
-  { title: "Main", items: [{ label: "Dashboard", path: "/" }] },
+  { title: "Main", color: "violet", items: [{ label: "Dashboard", path: "/" }] },
   {
-    title: "PDF Tools",
+    title: "PDF Tools", color: "blue",
     items: [
       { label: "All PDF Tools", path: "/pdf-tools" },
       { label: "Workflow Builder", path: "/workflow" },
@@ -9,25 +11,26 @@ export const NAV_SECTIONS = [
     ],
   },
   {
-    title: "Create",
+    title: "Create", color: "emerald",
     items: [
       { label: "Resume - Simple", path: "/tool/resume-builder?template_style=simple" },
       { label: "Resume - Modern", path: "/tool/resume-builder?template_style=modern" },
-      { label: "Handwriting Notes", path: "#", soon: true },
+      { label: "Handwriting Notes / Assignment Helper", path: "/handwriting" },
     ],
   },
   {
-    title: "AI Tools",
+    title: "AI Tools", color: "fuchsia",
     items: [
       { label: "AI Summarization", path: "/tool/ai-summarize" },
       { label: "AI Translation", path: "/tool/ai-translate" },
+      { label: "AI Answer Draft", path: "/tool/ai-draft" },
       { label: "Chat with PDF", path: "/tool/chat-pdf" },
       { label: "Extract Data", path: "/tool/ai-extract" },
       { label: "Hindi / Scanned OCR", path: "/tool/hindi-ocr" },
-      { label: "Context Visualizer", path: "#", soon: true },
-      { label: "Handwriting Notes", path: "/tool/handwriting" },
-      { label: "AI Answer Draft", path: "/tool/ai-draft" },
-
     ],
+  },
+  {
+    title: "Coming Soon", color: "amber",
+    items: COMING_SOON.map((c) => ({ label: `${c.icon} ${c.label}`, path: "#", soon: true })),
   },
 ];

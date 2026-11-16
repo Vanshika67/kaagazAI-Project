@@ -4,49 +4,49 @@ import ToolCard from "../components/ToolCard";
 import { CATEGORIES, TOOLS } from "../config/tools";
 import { WORKFLOW_TOOLS } from "../config/workflowTools";
 import { THEMES, themeForCategory } from "../config/theme";
+import { COMING_SOON } from "../config/comingSoon";
+
+// Ye tool alag page par hai, grid mein dobara nahi dikhega
+const HIDDEN_IDS = ["handwriting", "chat-pdf"];
+const LIST = TOOLS.filter((t) => !HIDDEN_IDS.includes(t.id) || t.id === "chat-pdf");
 
 const STATS = [
-  { label: "PDF tools", value: TOOLS.length, icon: "🧰", theme: "blue" },
+  { label: "Total tools", value: TOOLS.length, icon: "🧰", theme: "blue" },
   { label: "Categories", value: CATEGORIES.length, icon: "🗂️", theme: "green" },
   { label: "Tools you can chain", value: Object.keys(WORKFLOW_TOOLS).length, icon: "⛓️", theme: "fuchsia" },
   { label: "Files auto-deleted in", value: "1 hr", icon: "🛡️", theme: "yellow" },
 ];
 
-const COMING_SOON = [
-  { icon: "🤖", label: "AI Summarizer", theme: "cyan" },
-  { icon: "🌍", label: "PDF Translation", theme: "green" },
-  { icon: "📝", label: "Report Generator", theme: "yellow" },
-  { icon: "🧠", label: "Concept Visualizer", theme: "rose" },
+const FEATURED = [
+  { to: "/workflow", icon: "⛓️", name: "Workflow Builder", tag: "Unique", theme: "fuchsia",
+    text: "Pick several tools, set their order, and run them all on one PDF in a single go." },
+  { to: "/page-manager", icon: "🧩", name: "Page Manager", tag: "Unique", theme: "cyan",
+    text: "Reorder, delete and insert pages, even from other PDFs, in one step." },
+  { to: "/handwriting", icon: "✍️", name: "Handwriting Notes / Assignment Helper", tag: "New", theme: "yellow",
+    text: "Question aur answer daalo, apna handwriting font lagao, apni writing mein PDF pao." },
 ];
 
 export default function Home() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState("all");
   const q = query.trim().toLowerCase();
-  const matches = (t) => !q || `${t.name} ${t.description}`.toLowerCase().includes(q);
-
-  const visibleCategories = CATEGORIES.filter((c) => active === "all" || active === c.id);
-  const anyMatch = TOOLS.some((t) => matches(t) && (active === "all" || t.category === active));
+  const matches = (t) => !q || (t.name + " " + t.description).toLowerCase().includes(q);
+  const visibleCategories = active === "all" ? CATEGORIES : CATEGORIES.filter((c) => c.id === active);
+  const anyMatch = LIST.some(matches);
 
   return (
-    <div className="relative isolate overflow-hidden bg-slate-950 text-white">
-      {/* ---------- decorative background ---------- */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -left-24 -top-24 h-96 w-96 animate-float rounded-full bg-blue-600/30 blur-3xl" />
-        <div className="absolute -right-24 top-40 h-96 w-96 animate-float rounded-full bg-fuchsia-600/25 blur-3xl [animation-delay:-3s]" />
-        <div className="absolute left-1/3 top-[55%] h-80 w-80 animate-float rounded-full bg-amber-400/15 blur-3xl [animation-delay:-5s]" />
-        <div className="absolute bottom-10 right-10 h-72 w-72 animate-float rounded-full bg-emerald-500/20 blur-3xl [animation-delay:-1s]" />
-        <div className="bg-grid absolute inset-0" />
-      </div>
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-blue-600/20 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 top-40 h-96 w-96 rounded-full bg-fuchsia-600/20 blur-3xl" />
 
-      <div className="mx-auto max-w-6xl px-4 pb-16 pt-12">
+      <div className="relative mx-auto max-w-6xl px-4 py-10">
         {/* ---------- hero ---------- */}
-        <section className="relative text-center">
-          {/* floating emoji decorations (desktop only) */}
-          <span className="absolute left-4 top-2 hidden animate-float text-4xl lg:block">📄</span>
-          <span className="absolute right-8 top-10 hidden animate-float text-4xl [animation-delay:-2s] lg:block">🔒</span>
-          <span className="absolute left-24 top-44 hidden animate-float text-3xl [animation-delay:-4s] lg:block">⚡</span>
-          <span className="absolute right-28 top-52 hidden animate-float text-3xl [animation-delay:-6s] lg:block">🖼️</span>
+        <section className="relative py-10 text-center">
+          <span className="float-a absolute left-2 top-4 text-5xl opacity-90 sm:left-10">📄</span>
+          <span className="float-b absolute right-2 top-2 text-5xl opacity-90 sm:right-10">🔒</span>
+          <span className="float-c absolute bottom-10 left-6 hidden text-4xl sm:block">⚡</span>
+          <span className="float-a absolute bottom-6 right-12 hidden text-5xl sm:block">🖼️</span>
+          <span className="float-b absolute left-1/4 top-0 hidden text-3xl sm:block">✍️</span>
 
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm text-slate-200 backdrop-blur">
             <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
@@ -72,7 +72,7 @@ export default function Home() {
         </section>
 
         {/* ---------- stats ---------- */}
-        <section className="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <section className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {STATS.map((s) => {
             const t = THEMES[s.theme];
             return (
@@ -91,21 +91,16 @@ export default function Home() {
         {!q && active === "all" && (
           <section className="mt-12">
             <h2 className="mb-4 text-lg font-bold">⭐ Featured</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              {[
-                { to: "/workflow", icon: "⛓️", name: "Workflow Builder", tag: "Unique", theme: "fuchsia",
-                  text: "Pick several tools, set their order, and run them all on one PDF in a single go." },
-                { to: "/page-manager", icon: "🧩", name: "Page Manager", tag: "Unique", theme: "cyan",
-                  text: "Reorder, delete and insert pages, even from other PDFs, in one step." },
-              ].map((f) => (
+            <div className="grid gap-4 lg:grid-cols-3">
+              {FEATURED.map((f) => (
                 <Link key={f.to} to={f.to}
                   className={`group relative overflow-hidden rounded-3xl bg-linear-to-br ${THEMES[f.theme].gradient} p-6 shadow-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl`}>
                   <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white/20 transition duration-500 group-hover:scale-125" />
                   <div className="pointer-events-none absolute -bottom-10 right-20 h-28 w-28 rounded-full bg-black/10" />
                   <span className="relative inline-block rounded-full bg-white/25 px-3 py-1 text-xs font-bold uppercase tracking-wider">{f.tag}</span>
                   <div className="relative mt-3 text-5xl">{f.icon}</div>
-                  <h3 className="relative mt-3 text-2xl font-extrabold">{f.name}</h3>
-                  <p className="relative mt-1 max-w-sm text-white/90">{f.text}</p>
+                  <h3 className="relative mt-3 text-xl font-extrabold">{f.name}</h3>
+                  <p className="relative mt-1 text-white/90">{f.text}</p>
                   <span className="relative mt-4 inline-block font-semibold">Try it →</span>
                 </Link>
               ))}
@@ -113,7 +108,7 @@ export default function Home() {
           </section>
         )}
 
-        {/* ---------- category filter pills ---------- */}
+        {/* ---------- category pills ---------- */}
         <section className="mt-12 flex flex-wrap gap-2">
           {[{ id: "all", name: "All tools", icon: "✨" }, ...CATEGORIES].map((c) => {
             const isActive = active === c.id;
@@ -133,7 +128,7 @@ export default function Home() {
 
         {/* ---------- tools by category ---------- */}
         {visibleCategories.map((cat) => {
-          const tools = TOOLS.filter((t) => t.category === cat.id && matches(t));
+          const tools = LIST.filter((t) => t.category === cat.id && matches(t));
           if (tools.length === 0) return null;
           const theme = themeForCategory(cat.id);
           return (

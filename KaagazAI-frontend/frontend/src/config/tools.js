@@ -10,6 +10,8 @@
  * exactly (check http://127.0.0.1:8000/docs).
  */
 
+import { LANGUAGE_OPTIONS, TRANSLATE_OPTIONS } from "./languages";
+
 export const CATEGORIES = [
   { id: "organize", name: "Organize PDF", icon: "🗂️" },
   { id: "convert", name: "Convert", icon: "🔄" },
@@ -133,7 +135,7 @@ export const TOOLS = [
   {
     id: "split-size", name: "Split by Size", icon: "📏", category: "organize",
     description: "Split a big PDF into parts, each under a size limit (ZIP).",
-    endpoint: "/api/split-size", output: "split-by-size.zip",
+    endpoint: "/api/api/split-size", output: "split-by-size.zip",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "max_mb", label: "Max size per part (MB)", type: "number", default: "1", optional: true },
@@ -142,7 +144,7 @@ export const TOOLS = [
   {
     id: "split-smart", name: "Split by Blank Page / Bookmarks", icon: "✂️", category: "organize",
     description: "Automatically split a PDF at blank pages or top-level bookmarks (ZIP).",
-    endpoint: "/api/split-smart", output: "split.zip",
+    endpoint: "/api/api/split-smart", output: "split.zip",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "mode", label: "Split at", type: "select", default: "blank",
@@ -152,7 +154,7 @@ export const TOOLS = [
   {
     id: "nup", name: "N-up / Booklet", icon: "📚", category: "organize",
     description: "Put 2 or 4 pages on one sheet, or make a printable booklet.",
-    endpoint: "/api/nup", output: "n-up.pdf",
+    endpoint: "/api/api/nup", output: "n-up.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "mode", label: "Mode", type: "select", default: "nup",
@@ -165,7 +167,7 @@ export const TOOLS = [
   {
     id: "resize-page", name: "Resize Page", icon: "📐", category: "organize",
     description: "Change the page size to A4, Letter and more.",
-    endpoint: "/api/resize-page", output: "resized.pdf",
+    endpoint: "/api/api/resize-page", output: "resized.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "size", label: "Page size", type: "select", default: "A4",
@@ -259,43 +261,43 @@ export const TOOLS = [
   {
     id: "pdf-to-text", name: "PDF to Text", icon: "📃", category: "convert",
     description: "Extract all text from a PDF as a .txt file.",
-    endpoint: "/api/pdf-to-text", output: "output.txt",
+    endpoint: "/api/api/pdf-to-text", output: "output.txt",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
   {
     id: "pdf-to-csv", name: "PDF to CSV", icon: "📊", category: "convert",
     description: "Extract tables from a PDF into a CSV file.",
-    endpoint: "/api/pdf-to-csv", output: "tables.csv",
+    endpoint: "/api/api/pdf-to-csv", output: "tables.csv",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
   {
     id: "pdf-to-pdfa", name: "PDF to PDF/A", icon: "🗄️", category: "convert",
     description: "Convert a PDF to the PDF/A archive format (needs Ghostscript).",
-    endpoint: "/api/pdf-to-pdfa", output: "pdfa.pdf",
+    endpoint: "/api/api/pdf-to-pdfa", output: "pdfa.pdf",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
   {
     id: "markdown-to-pdf", name: "Markdown to PDF", icon: "🧾", category: "convert",
     description: "Paste Markdown and get a PDF.",
-    endpoint: "/api/markdown-to-pdf", output: "markdown.pdf",
+    endpoint: "/api/api/markdown-to-pdf", output: "markdown.pdf",
     fields: [{ name: "text", label: "Markdown", type: "textarea", placeholder: "# Hello\n\nWrite here..." }],
   },
   {
     id: "table-to-pdf", name: "CSV / JSON to PDF Table", icon: "🧮", category: "convert",
     description: "Turn a CSV or JSON file into a formatted PDF table.",
-    endpoint: "/api/table-to-pdf", output: "table.pdf",
+    endpoint: "/api/api/table-to-pdf", output: "table.pdf",
     fields: [{ name: "file", label: "CSV or JSON file", type: "file", accept: ".csv,.json" }],
   },
   {
     id: "url-to-pdf", name: "URL to PDF", icon: "🔗", category: "convert",
     description: "Save a public webpage as a PDF.",
-    endpoint: "/api/url-to-pdf", output: "webpage.pdf",
+    endpoint: "/api/api/url-to-pdf", output: "webpage.pdf",
     fields: [{ name: "url", label: "Page URL", type: "text", placeholder: "https://example.com" }],
   },
   {
     id: "passport-photo", name: "Passport Photo Maker", icon: "🧑", category: "convert",
     description: "35x45 mm photo at 300 DPI, or a 4x6 sheet with 6 copies.",
-    endpoint: "/api/passport-photo", output: "passport-photo.jpg",
+    endpoint: "/api/api/passport-photo", output: "passport-photo.jpg",
     fields: [
       { name: "file", label: "Photo", type: "file", accept: IMAGES },
       { name: "sheet", label: "4x6 sheet with 6 copies?", type: "select", default: "no",
@@ -305,7 +307,7 @@ export const TOOLS = [
   {
     id: "remove-bg", name: "Remove Background", icon: "🪄", category: "convert",
     description: "Make the image background transparent.",
-    endpoint: "/api/remove-bg", output: "no-background.png",
+    endpoint: "/api/api/remove-bg", output: "no-background.png",
     fields: [{ name: "file", label: "Image", type: "file", accept: IMAGES }],
   },
 
@@ -313,7 +315,7 @@ export const TOOLS = [
   {
     id: "compress", name: "Compress PDF", icon: "📦", category: "optimize",
     description: "Reduce the file size of a PDF.",
-    endpoint: "/api/pdf/compress", output: "compressed.pdf",
+    endpoint: "/api/api/pdf/compress", output: "compressed.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "quality", label: "Quality", type: "select", default: "medium",
@@ -323,13 +325,13 @@ export const TOOLS = [
   {
     id: "repair", name: "Repair PDF", icon: "🛠️", category: "optimize",
     description: "Try to fix a damaged or corrupted PDF.",
-    endpoint: "/api/pdf/repair", output: "repaired.pdf",
+    endpoint: "/api/api/pdf/repair", output: "repaired.pdf",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
   {
     id: "ocr", name: "OCR PDF", icon: "🔍", category: "optimize",
     description: "Make a scanned PDF searchable and copyable.",
-    endpoint: "/api/pdf/ocr", output: "ocr.pdf",
+    endpoint: "/api/api/pdf/ocr", output: "ocr.pdf",
     fields: [
       { name: "file", label: "Scanned PDF", type: "file", accept: PDF },
       { name: "language", label: "Language code", type: "text", default: "eng", optional: true,
@@ -341,7 +343,7 @@ export const TOOLS = [
   {
     id: "compress-target", name: "Compress to Target Size", icon: "🎯", category: "optimize",
     description: "Shrink a PDF to your target size, e.g. under 200 KB for form uploads.",
-    endpoint: "/api/compress-target", output: "compressed.pdf",
+    endpoint: "/api/api/compress-target", output: "compressed.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "target_kb", label: "Target size (KB)", type: "number", default: "200" },
@@ -350,7 +352,7 @@ export const TOOLS = [
   {
     id: "grayscale", name: "Grayscale PDF", icon: "⚫", category: "optimize",
     description: "Convert a colour PDF to black and white. Text becomes an image (not selectable).",
-    endpoint: "/api/grayscale", output: "grayscale.pdf",
+    endpoint: "/api/api/grayscale", output: "grayscale.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "dpi", label: "Quality (DPI)", type: "number", default: "150", optional: true,
@@ -360,7 +362,7 @@ export const TOOLS = [
   {
     id: "image-compress", name: "Image Compress", icon: "🗜️", category: "optimize",
     description: "Reduce the size of a JPG/PNG.",
-    endpoint: "/api/image-compress", output: "compressed.jpg",
+    endpoint: "/api/api/image-compress", output: "compressed.jpg",
     fields: [
       { name: "file", label: "Image", type: "file", accept: IMAGES },
       { name: "quality", label: "Quality (5-95)", type: "number", default: "70", optional: true },
@@ -370,7 +372,7 @@ export const TOOLS = [
   {
     id: "photo-resize", name: "Photo Resizer (exact KB)", icon: "📸", category: "optimize",
     description: "Resize a photo or signature under a target size for exam and government forms.",
-    endpoint: "/api/photo-resize", output: "resized.jpg",
+    endpoint: "/api/api/photo-resize", output: "resized.jpg",
     fields: [
       { name: "file", label: "Photo / signature", type: "file", accept: IMAGES },
       { name: "target_kb", label: "Target size (KB)", type: "number", default: "50" },
@@ -384,7 +386,7 @@ export const TOOLS = [
   {
     id: "protect", name: "Protect File", icon: "🔐", category: "security",
     description: "Lock a PDF, Word, Excel, PowerPoint or any other file with a password.",
-    endpoint: "/api/security/protect", output: "protected_file",
+    endpoint: "/api/api/security/protect", output: "protected_file",
     fields: [
       { name: "file", label: "File", type: "file", accept: "*/*" },
       { name: "password", label: "Password", type: "password" },
@@ -393,7 +395,7 @@ export const TOOLS = [
   {
     id: "unlock", name: "Unlock File", icon: "🔓", category: "security",
     description: "Remove the password from a protected PDF, Word, Excel, PowerPoint or ZIP file.",
-    endpoint: "/api/security/unlock", output: "unlocked_file",
+    endpoint: "/api/api/security/unlock", output: "unlocked_file",
     fields: [
       { name: "file", label: "Protected file", type: "file", accept: "*/*" },
       { name: "password", label: "Current password", type: "password" },
@@ -402,7 +404,7 @@ export const TOOLS = [
   {
     id: "crack-password", name: "Recover Forgotten Password", icon: "🔑", category: "security",
     description: "Try to unlock a PDF, Word, Excel or PowerPoint file you forgot the password to.",
-    endpoint: "/api/security/crack-password", output: "unlocked_file",
+    endpoint: "/api/api/security/crack-password", output: "unlocked_file",
     fields: [
       { name: "file", label: "Protected file", type: "file", accept: ".pdf,.docx,.xlsx,.pptx" },
       { name: "wordlist", label: "Wordlist (.txt, one password per line)", type: "file", accept: ".txt", optional: true },
@@ -416,7 +418,7 @@ export const TOOLS = [
   {
     id: "watermark", name: "Watermark PDF", icon: "💧", category: "security",
     description: "Add a diagonal text watermark to every page.",
-    endpoint: "/api/pdf/watermark", output: "watermarked.pdf",
+    endpoint: "/api/api/pdf/watermark", output: "watermarked.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "text", label: "Watermark text", type: "text", default: "CONFIDENTIAL" },
@@ -425,7 +427,7 @@ export const TOOLS = [
   {
     id: "redact", name: "Redact PDF", icon: "⬛", category: "security",
     description: "Permanently black out and delete sensitive text.",
-    endpoint: "/api/pdf/redact", output: "redacted.pdf",
+    endpoint: "/api/api/pdf/redact", output: "redacted.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "terms", label: "Text to redact", type: "text", placeholder: "Account number, phone, name",
@@ -436,19 +438,19 @@ export const TOOLS = [
   {
     id: "flatten", name: "Flatten PDF", icon: "🧱", category: "security",
     description: "Make form fields and annotations permanent so they can't be edited.",
-    endpoint: "/api/flatten", output: "flattened.pdf",
+    endpoint: "/api/api/flatten", output: "flattened.pdf",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
   {
     id: "remove-metadata", name: "Remove Metadata", icon: "🧹", category: "security",
     description: "Erase author, title and hidden info from a PDF.",
-    endpoint: "/api/remove-metadata", output: "clean.pdf",
+    endpoint: "/api/api/remove-metadata", output: "clean.pdf",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
   {
     id: "digital-sign", name: "Digital Signature", icon: "🪪", category: "security",
     description: "Sign a PDF with your .p12 / .pfx certificate.",
-    endpoint: "/api/digital-sign", output: "signed.pdf",
+    endpoint: "/api/api/digital-sign", output: "signed.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "cert", label: "Certificate (.p12 / .pfx)", type: "file", accept: ".p12,.pfx" },
@@ -458,7 +460,7 @@ export const TOOLS = [
   {
     id: "auto-redact", name: "Auto Redact", icon: "🕶️", category: "security",
     description: "Detect and black out email, phone, Aadhaar and PAN automatically (text PDFs only).",
-    endpoint: "/api/auto-redact", output: "redacted.pdf",
+    endpoint: "/api/api/auto-redact", output: "redacted.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "types", label: "What to hide", type: "text", default: "email,phone,aadhaar,pan", optional: true,
@@ -468,7 +470,7 @@ export const TOOLS = [
   {
     id: "aadhaar-mask", name: "Aadhaar Masking", icon: "🙈", category: "security",
     description: "Hide the first 8 digits of Aadhaar numbers. Works on text PDFs only.",
-    endpoint: "/api/aadhaar-mask", output: "aadhaar-masked.pdf",
+    endpoint: "/api/api/aadhaar-mask", output: "aadhaar-masked.pdf",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
 
@@ -476,7 +478,7 @@ export const TOOLS = [
   {
     id: "edit-add-text", name: "Edit PDF (Add Text)", icon: "✍️", category: "edit",
     description: "Write new text onto a page at a position you choose.",
-    endpoint: "/api/pdf/edit-add-text", output: "edited.pdf",
+    endpoint: "/api/api/pdf/edit-add-text", output: "edited.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "page_number", label: "Page number", type: "number", default: "1" },
@@ -490,7 +492,7 @@ export const TOOLS = [
   {
     id: "sign", name: "Sign PDF", icon: "🖊️", category: "edit",
     description: "Place your signature image on a page.",
-    endpoint: "/api/pdf/sign", output: "signed.pdf",
+    endpoint: "/api/api/pdf/sign", output: "signed.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "signature", label: "Signature image (PNG/JPG)", type: "file", accept: IMAGES },
@@ -505,13 +507,13 @@ export const TOOLS = [
   {
     id: "form-fields", name: "List Form Fields", icon: "📋", category: "edit",
     description: "See the names of the fillable fields inside a PDF form.",
-    endpoint: "/api/pdf/form-fields", output: "form_fields.json",
+    endpoint: "/api/api/pdf/form-fields", output: "form_fields.json",
     fields: [{ name: "file", label: "PDF form", type: "file", accept: PDF }],
   },
   {
     id: "fill-form", name: "Fill PDF Form", icon: "🧾", category: "edit",
     description: "Fill a fillable PDF form. Use 'List Form Fields' first to get the field names.",
-    endpoint: "/api/pdf/fill-form", output: "filled_form.pdf",
+    endpoint: "/api/api/pdf/fill-form", output: "filled_form.pdf",
     fields: [
       { name: "file", label: "PDF form", type: "file", accept: PDF },
       { name: "fields", label: "Field values (JSON)", type: "textarea",
@@ -522,7 +524,7 @@ export const TOOLS = [
   {
     id: "compare", name: "Compare PDFs", icon: "⚖️", category: "edit",
     description: "Find the text differences between two PDFs.",
-    endpoint: "/api/pdf/compare", output: "compare.json",
+    endpoint: "/api/api/pdf/compare", output: "compare.json",
     fields: [
       { name: "file1", label: "First PDF", type: "file", accept: PDF },
       { name: "file2", label: "Second PDF", type: "file", accept: PDF },
@@ -531,7 +533,7 @@ export const TOOLS = [
   {
     id: "generate-document", name: "Generate Document", icon: "🪪", category: "edit",
     description: "Fill a sample ID card or marksheet template and get a PDF (demo use only).",
-    endpoint: "/api/tools/generate-document-form", output: "document.pdf",
+    endpoint: "/api/api/tools/generate-document-form", output: "document.pdf",
     fields: [
       { name: "template_key", label: "Template", type: "select", default: "marksheet",
         options: [{ value: "marksheet", label: "Marksheet" }, { value: "generic_id_card", label: "ID card" }] },
@@ -543,7 +545,7 @@ export const TOOLS = [
   {
     id: "resume-builder", name: "Resume Builder", icon: "📄", category: "edit",
     description: "Build a resume in a simple ATS-friendly style, or a colorful modern 2-column style with a photo.",
-    endpoint: "/api/tools/resume-builder", output: "resume.pdf",
+    endpoint: "/api/api/tools/resume-builder", output: "resume.pdf",
     fields: [
       { name: "template_style", label: "Template", type: "select", default: "simple",
         options: [
@@ -574,7 +576,7 @@ export const TOOLS = [
   {
     id: "handwriting", name: "Handwriting Notes", icon: "📓", category: "edit",
     description: "Apne handwriting font mein ruled-page notes PDF banao.",
-    endpoint: "/api/tools/handwriting", output: "handwriting_notes.pdf",
+    endpoint: "/api/api/tools/handwriting", output: "handwriting_notes.pdf",
     fields: [
       { name: "font", label: "Aapka handwriting font (.ttf / .otf)", type: "file", accept: ".ttf,.otf", optional: true,
         help: "Apni handwriting se font banane ke liye Calligraphr jaisa free tool use karo. Khaali chhodoge to default font use hoga." },
@@ -593,7 +595,7 @@ export const TOOLS = [
   {
     id: "edit-metadata", name: "Edit Metadata", icon: "🏷️", category: "edit",
     description: "Change the title, author, subject and keywords of a PDF.",
-    endpoint: "/api/edit-metadata", output: "metadata-updated.pdf",
+    endpoint: "/api/api/edit-metadata", output: "metadata-updated.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "title", label: "Title", type: "text", optional: true },
@@ -605,7 +607,7 @@ export const TOOLS = [
   {
     id: "header-footer", name: "Add Header / Footer", icon: "📑", category: "edit",
     description: "Add text at the top and bottom of every page.",
-    endpoint: "/api/header-footer", output: "header-footer.pdf",
+    endpoint: "/api/api/header-footer", output: "header-footer.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "header", label: "Header text", type: "text", optional: true },
@@ -616,7 +618,7 @@ export const TOOLS = [
   {
     id: "highlight", name: "Highlight Text", icon: "🖍️", category: "edit",
     description: "Highlight words in a PDF. Separate multiple words with commas.",
-    endpoint: "/api/highlight", output: "highlighted.pdf",
+    endpoint: "/api/api/highlight", output: "highlighted.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "text", label: "Words to highlight", type: "text", placeholder: "invoice, total, due date" },
@@ -625,7 +627,7 @@ export const TOOLS = [
   {
     id: "qr-pdf", name: "Add QR Code", icon: "🔳", category: "edit",
     description: "Stamp a QR code on your PDF pages.",
-    endpoint: "/api/qr-pdf", output: "with-qr.pdf",
+    endpoint: "/api/api/qr-pdf", output: "with-qr.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "text", label: "QR content (link or text)", type: "text", placeholder: "https://example.com" },
@@ -642,7 +644,7 @@ export const TOOLS = [
   {
     id: "invoice", name: "Invoice Generator", icon: "💰", category: "edit",
     description: "Create a GST invoice PDF.",
-    endpoint: "/api/invoice", output: "invoice.pdf",
+    endpoint: "/api/api/invoice", output: "invoice.pdf",
     fields: [
       { name: "seller", label: "Seller name & address", type: "text" },
       { name: "buyer", label: "Buyer name & address", type: "text" },
@@ -661,32 +663,23 @@ export const TOOLS = [
     custom: true,
     fields: [],
   },
-  {
+ 
+    {
     id: "ai-summarize", name: "AI Summarizer", icon: "🧠", category: "ai",
-    description: "Get a summary of any text PDF.",
-    endpoint: "/api/ai-summarize", output: "summary.txt",
+    description: "Get a summary of any text PDF in the language you choose.",
+    endpoint: "/api/api/ai-summarize", output: "summary.txt",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "length", label: "Length", type: "select", default: "medium",
         options: [{ value: "short", label: "Short" }, { value: "medium", label: "Medium" }, { value: "detailed", label: "Detailed" }] },
       { name: "language", label: "Summary language", type: "select", default: "English",
-        options: [{ value: "English", label: "English" }, { value: "Hindi", label: "Hindi" }, { value: "Hinglish", label: "Hinglish" }] },
-    ],
-  },
-  {
-    id: "ai-translate", name: "PDF Translation", icon: "🌍", category: "ai",
-    description: "Translate a PDF to Hindi, English and more (downloads a .txt file).",
-    endpoint: "/api/ai-translate", output: "translated.txt",
-    fields: [
-      { name: "file", label: "PDF file", type: "file", accept: PDF },
-      { name: "target", label: "Translate to", type: "select", default: "Hindi",
-        options: ["Hindi", "English", "Marathi", "Gujarati", "Tamil", "Bengali"].map((l) => ({ value: l, label: l })) },
+        options: LANGUAGE_OPTIONS },
     ],
   },
   {
     id: "ai-extract", name: "Extract Data (Invoice / Resume)", icon: "🗃️", category: "ai",
     description: "Turn an invoice or resume PDF into structured JSON or Excel.",
-    endpoint: "/api/ai-extract", output: "data.json",
+    endpoint: "/api/api/ai-extract", output: "data.json",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "doc_type", label: "Document type", type: "select", default: "invoice",
@@ -698,11 +691,28 @@ export const TOOLS = [
   {
     id: "hindi-ocr", name: "Hindi / Scanned OCR", icon: "🔤", category: "ai",
     description: "Read Hindi + English text from scanned PDFs or photos (downloads a .txt file).",
-    endpoint: "/api/hindi-ocr", output: "ocr.txt",
+    endpoint: "/api/api/hindi-ocr", output: "ocr.txt",
     fields: [
       { name: "file", label: "Scanned PDF or photo", type: "file", accept: ".pdf,image/*" },
       { name: "lang", label: "Language code", type: "text", default: "hin+eng", optional: true,
         help: "hin+eng = Hindi + English. Hindi language data must be installed in Tesseract." },
+    ],
+  },
+    {
+    id: "ai-draft", name: "AI Answer Draft", icon: "📝", category: "ai",
+    description: "Question daalo, AI answer ka draft banayega. Edit karo aur apni handwriting mein PDF banao.",
+    // Custom page: App.jsx mein /tool/ai-draft route /tool/:id se pehle hai.
+    custom: true,
+    fields: [],
+  },
+    {
+    id: "ai-translate", name: "PDF Translation", icon: "🌍", category: "ai",
+    description: "Translate a PDF into 30+ Indian and international languages (downloads a .txt file).",
+    endpoint: "/api/api/ai-translate", output: "translated.txt",
+    fields: [
+      { name: "file", label: "PDF file", type: "file", accept: PDF },
+      { name: "target", label: "Translate to", type: "select", default: "Hindi",
+        options: TRANSLATE_OPTIONS },
     ],
   },
 ];

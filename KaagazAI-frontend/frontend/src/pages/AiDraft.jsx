@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LANGUAGE_OPTIONS } from "../config/languages";
 
 // Agar apiClient.js mein alag base URL hai to yahan wahi rakho
 const API = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000";
@@ -91,9 +92,9 @@ export default function AiDraft() {
               <option value="long" className="text-black">Long (10 marks)</option>
             </select>
             <select className={box + " sm:w-auto"} value={language} onChange={(e) => setLanguage(e.target.value)}>
-              <option className="text-black">English</option>
-              <option className="text-black">Hindi</option>
-              <option className="text-black">Hinglish</option>
+              {LANGUAGE_OPTIONS.map((l) => (
+                <option key={l.value} value={l.value} className="text-black">{l.label}</option>
+        ))}
             </select>
             <button type="button" onClick={makeDraft} disabled={!question.trim() || busy !== ""}
               className="rounded-lg bg-indigo-600 px-5 py-2 font-semibold disabled:opacity-50">
@@ -114,6 +115,13 @@ export default function AiDraft() {
             Aapka handwriting font (.ttf / .otf), khaali chhodo to default font
             <input type="file" accept=".ttf,.otf" className="mt-1 block text-sm"
               onChange={(e) => setFont(e.target.files?.[0] ?? null)} />
+          </label>
+          <label className="block text-xs text-slate-400">AI draft ki language
+            <select className={box + " sm:w-64"} value={language} onChange={(e) => setLanguage(e.target.value)}>
+              {LANGUAGE_OPTIONS.map((l) => (
+                <option key={l.value} value={l.value} className="text-black">{l.label}</option>
+           ))}
+            </select>
           </label>
           <div className="flex flex-wrap gap-3">
             <input className={box + " sm:w-32"} type="number" value={fontSize} title="Font size"
