@@ -8,6 +8,14 @@
  *
  * IMPORTANT: every field `name` must match the backend parameter name
  * exactly (check http://127.0.0.1:8000/docs).
+ *
+ * NOTE on /api vs /api/api: most routers are registered in main.py with no
+ * extra prefix, so their endpoint is a single /api/... (set directly in
+ * their own file). A few newer routers get `prefix="/api"` in main.py on
+ * TOP of an `/api/...` path already written inside that router file, which
+ * doubles it to /api/api/... Those specific tools are marked below.
+ * Cleanest long-term fix is to remove the duplicate prefix in main.py
+ * instead of patching it here - ask if you want that cleaned up later.
  */
 
 import { LANGUAGE_OPTIONS, TRANSLATE_OPTIONS } from "./languages";
@@ -131,7 +139,7 @@ export const TOOLS = [
         help: "Each group's count must match how many photos you uploaded for it, in the same order (e.g. Aadhaar front, Aadhaar back, then PAN front, PAN back...)." },
     ],
   },
-  // --- new organize tools ---
+  // --- new organize tools (double /api) ---
   {
     id: "split-size", name: "Split by Size", icon: "📏", category: "organize",
     description: "Split a big PDF into parts, each under a size limit (ZIP).",
@@ -257,7 +265,7 @@ export const TOOLS = [
     endpoint: "/api/convert/scan-to-pdf", output: "scanned.pdf",
     fields: [{ name: "files", label: "Photos", type: "file", multiple: true, accept: IMAGES }],
   },
-  // --- new convert tools ---
+  // --- new convert tools (double /api) ---
   {
     id: "pdf-to-text", name: "PDF to Text", icon: "📃", category: "convert",
     description: "Extract all text from a PDF as a .txt file.",
@@ -281,6 +289,19 @@ export const TOOLS = [
     description: "Paste Markdown and get a PDF.",
     endpoint: "/api/api/markdown-to-pdf", output: "markdown.pdf",
     fields: [{ name: "text", label: "Markdown", type: "textarea", placeholder: "# Hello\n\nWrite here..." }],
+  },
+    {
+    id: "text-to-pdf", name: "Text to PDF", icon: "📄", category: "convert",
+    description: "Kitni bhi lines ka plain text likho, seedha PDF ban jayega.",
+    endpoint: "/api/text-to-pdf", output: "text_to_pdf.pdf",
+    fields: [
+      { name: "title", label: "Title (optional)", type: "text", optional: true, placeholder: "Meri Notes" },
+      { name: "text", label: "Text", type: "textarea",
+        placeholder: "Yahan apna text likho, jitni chaho utni lines...\nHar line yahin aa jayegi.",
+        help: "Text jitna lamba hoga, PDF mein utne hi pages apne aap ban jayenge." },
+      { name: "font_size", label: "Font size", type: "number", default: "12", optional: true },
+      { name: "line_spacing", label: "Line spacing (1.0 - 2.5)", type: "number", default: "1.4", optional: true },
+    ],
   },
   {
     id: "table-to-pdf", name: "CSV / JSON to PDF Table", icon: "🧮", category: "convert",
@@ -315,7 +336,7 @@ export const TOOLS = [
   {
     id: "compress", name: "Compress PDF", icon: "📦", category: "optimize",
     description: "Reduce the file size of a PDF.",
-    endpoint: "/api/api/pdf/compress", output: "compressed.pdf",
+    endpoint: "/api/pdf/compress", output: "compressed.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "quality", label: "Quality", type: "select", default: "medium",
@@ -325,13 +346,13 @@ export const TOOLS = [
   {
     id: "repair", name: "Repair PDF", icon: "🛠️", category: "optimize",
     description: "Try to fix a damaged or corrupted PDF.",
-    endpoint: "/api/api/pdf/repair", output: "repaired.pdf",
+    endpoint: "/api/pdf/repair", output: "repaired.pdf",
     fields: [{ name: "file", label: "PDF file", type: "file", accept: PDF }],
   },
   {
     id: "ocr", name: "OCR PDF", icon: "🔍", category: "optimize",
     description: "Make a scanned PDF searchable and copyable.",
-    endpoint: "/api/api/pdf/ocr", output: "ocr.pdf",
+    endpoint: "/api/pdf/ocr", output: "ocr.pdf",
     fields: [
       { name: "file", label: "Scanned PDF", type: "file", accept: PDF },
       { name: "language", label: "Language code", type: "text", default: "eng", optional: true,
@@ -339,7 +360,7 @@ export const TOOLS = [
       { name: "dpi", label: "Scan quality (DPI)", type: "number", default: "200", optional: true },
     ],
   },
-  // --- new optimize tools ---
+  // --- new optimize tools (double /api) ---
   {
     id: "compress-target", name: "Compress to Target Size", icon: "🎯", category: "optimize",
     description: "Shrink a PDF to your target size, e.g. under 200 KB for form uploads.",
@@ -386,7 +407,7 @@ export const TOOLS = [
   {
     id: "protect", name: "Protect File", icon: "🔐", category: "security",
     description: "Lock a PDF, Word, Excel, PowerPoint or any other file with a password.",
-    endpoint: "/api/api/security/protect", output: "protected_file",
+    endpoint: "/api/security/protect", output: "protected_file",
     fields: [
       { name: "file", label: "File", type: "file", accept: "*/*" },
       { name: "password", label: "Password", type: "password" },
@@ -395,7 +416,7 @@ export const TOOLS = [
   {
     id: "unlock", name: "Unlock File", icon: "🔓", category: "security",
     description: "Remove the password from a protected PDF, Word, Excel, PowerPoint or ZIP file.",
-    endpoint: "/api/api/security/unlock", output: "unlocked_file",
+    endpoint: "/api/security/unlock", output: "unlocked_file",
     fields: [
       { name: "file", label: "Protected file", type: "file", accept: "*/*" },
       { name: "password", label: "Current password", type: "password" },
@@ -404,7 +425,7 @@ export const TOOLS = [
   {
     id: "crack-password", name: "Recover Forgotten Password", icon: "🔑", category: "security",
     description: "Try to unlock a PDF, Word, Excel or PowerPoint file you forgot the password to.",
-    endpoint: "/api/api/security/crack-password", output: "unlocked_file",
+    endpoint: "/api/security/crack-password", output: "unlocked_file",
     fields: [
       { name: "file", label: "Protected file", type: "file", accept: ".pdf,.docx,.xlsx,.pptx" },
       { name: "wordlist", label: "Wordlist (.txt, one password per line)", type: "file", accept: ".txt", optional: true },
@@ -418,7 +439,7 @@ export const TOOLS = [
   {
     id: "watermark", name: "Watermark PDF", icon: "💧", category: "security",
     description: "Add a diagonal text watermark to every page.",
-    endpoint: "/api/api/pdf/watermark", output: "watermarked.pdf",
+    endpoint: "/api/pdf/watermark", output: "watermarked.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "text", label: "Watermark text", type: "text", default: "CONFIDENTIAL" },
@@ -427,14 +448,14 @@ export const TOOLS = [
   {
     id: "redact", name: "Redact PDF", icon: "⬛", category: "security",
     description: "Permanently black out and delete sensitive text.",
-    endpoint: "/api/api/pdf/redact", output: "redacted.pdf",
+    endpoint: "/api/pdf/redact", output: "redacted.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "terms", label: "Text to redact", type: "text", placeholder: "Account number, phone, name",
         help: "Separate multiple words with commas. Works on text PDFs; for scanned PDFs run OCR first." },
     ],
   },
-  // --- new security tools ---
+  // --- new security tools (double /api) ---
   {
     id: "flatten", name: "Flatten PDF", icon: "🧱", category: "security",
     description: "Make form fields and annotations permanent so they can't be edited.",
@@ -478,7 +499,7 @@ export const TOOLS = [
   {
     id: "edit-add-text", name: "Edit PDF (Add Text)", icon: "✍️", category: "edit",
     description: "Write new text onto a page at a position you choose.",
-    endpoint: "/api/api/pdf/edit-add-text", output: "edited.pdf",
+    endpoint: "/api/pdf/edit-add-text", output: "edited.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "page_number", label: "Page number", type: "number", default: "1" },
@@ -492,7 +513,7 @@ export const TOOLS = [
   {
     id: "sign", name: "Sign PDF", icon: "🖊️", category: "edit",
     description: "Place your signature image on a page.",
-    endpoint: "/api/api/pdf/sign", output: "signed.pdf",
+    endpoint: "/api/pdf/sign", output: "signed.pdf",
     fields: [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "signature", label: "Signature image (PNG/JPG)", type: "file", accept: IMAGES },
@@ -507,13 +528,13 @@ export const TOOLS = [
   {
     id: "form-fields", name: "List Form Fields", icon: "📋", category: "edit",
     description: "See the names of the fillable fields inside a PDF form.",
-    endpoint: "/api/api/pdf/form-fields", output: "form_fields.json",
+    endpoint: "/api/pdf/form-fields", output: "form_fields.json",
     fields: [{ name: "file", label: "PDF form", type: "file", accept: PDF }],
   },
   {
     id: "fill-form", name: "Fill PDF Form", icon: "🧾", category: "edit",
     description: "Fill a fillable PDF form. Use 'List Form Fields' first to get the field names.",
-    endpoint: "/api/api/pdf/fill-form", output: "filled_form.pdf",
+    endpoint: "/api/pdf/fill-form", output: "filled_form.pdf",
     fields: [
       { name: "file", label: "PDF form", type: "file", accept: PDF },
       { name: "fields", label: "Field values (JSON)", type: "textarea",
@@ -524,7 +545,7 @@ export const TOOLS = [
   {
     id: "compare", name: "Compare PDFs", icon: "⚖️", category: "edit",
     description: "Find the text differences between two PDFs.",
-    endpoint: "/api/api/pdf/compare", output: "compare.json",
+    endpoint: "/api/pdf/compare", output: "compare.json",
     fields: [
       { name: "file1", label: "First PDF", type: "file", accept: PDF },
       { name: "file2", label: "Second PDF", type: "file", accept: PDF },
@@ -533,7 +554,7 @@ export const TOOLS = [
   {
     id: "generate-document", name: "Generate Document", icon: "🪪", category: "edit",
     description: "Fill a sample ID card or marksheet template and get a PDF (demo use only).",
-    endpoint: "/api/api/tools/generate-document-form", output: "document.pdf",
+    endpoint: "/api/tools/generate-document-form", output: "document.pdf",
     fields: [
       { name: "template_key", label: "Template", type: "select", default: "marksheet",
         options: [{ value: "marksheet", label: "Marksheet" }, { value: "generic_id_card", label: "ID card" }] },
@@ -545,7 +566,7 @@ export const TOOLS = [
   {
     id: "resume-builder", name: "Resume Builder", icon: "📄", category: "edit",
     description: "Build a resume in a simple ATS-friendly style, or a colorful modern 2-column style with a photo.",
-    endpoint: "/api/api/tools/resume-builder", output: "resume.pdf",
+    endpoint: "/api/tools/resume-builder", output: "resume.pdf",
     fields: [
       { name: "template_style", label: "Template", type: "select", default: "simple",
         options: [
@@ -572,11 +593,11 @@ export const TOOLS = [
       { name: "certifications", label: "Certifications", type: "textarea", optional: true },
     ],
   },
-  // NEW: Handwriting Notes (apne handwriting font mein ruled-page PDF)
+  // Handwriting Notes (apne handwriting font mein ruled-page PDF)
   {
     id: "handwriting", name: "Handwriting Notes", icon: "📓", category: "edit",
     description: "Apne handwriting font mein ruled-page notes PDF banao.",
-    endpoint: "/api/api/tools/handwriting", output: "handwriting_notes.pdf",
+    endpoint: "/api/tools/handwriting", output: "handwriting_notes.pdf",
     fields: [
       { name: "font", label: "Aapka handwriting font (.ttf / .otf)", type: "file", accept: ".ttf,.otf", optional: true,
         help: "Apni handwriting se font banane ke liye Calligraphr jaisa free tool use karo. Khaali chhodoge to default font use hoga." },
@@ -591,7 +612,20 @@ export const TOOLS = [
         options: [{ value: "yes", label: "Yes" }, { value: "no", label: "No" }] },
     ],
   },
-  // --- new edit tools ---
+  // --- Report Generator ---
+    {
+    id: "report-generator", name: "Report Generator", icon: "🧾", category: "edit",
+    description: "Title aur sections likho, cover-page wali formatted report PDF milegi.",
+    endpoint: "/api/tools/report-generator", output: "report.pdf",
+    fields: [
+      { name: "title", label: "Report title", type: "text", placeholder: "Quarterly Sales Report" },
+      { name: "author", label: "Author (optional)", type: "text", optional: true },
+      { name: "content", label: "Content", type: "textarea",
+        placeholder: "# Introduction\nYahan intro likho...\n\n# Methodology\nYahan tareeka likho...",
+        help: "'# ' se naya section shuru karo. Jitne chaho utne sections likh sakte ho." },
+    ],
+  },
+  // --- new edit tools (double /api) ---
   {
     id: "edit-metadata", name: "Edit Metadata", icon: "🏷️", category: "edit",
     description: "Change the title, author, subject and keywords of a PDF.",
@@ -660,11 +694,11 @@ export const TOOLS = [
     id: "chat-pdf", name: "Chat with PDF", icon: "💬", category: "ai",
     description: "Upload a PDF and ask questions about it using AI.",
     // Custom page: needs <Route path="/tool/chat-pdf" element={<ChatPdf />} /> ABOVE the /tool/:id route.
+    // Its own fetch calls (inside ChatPdf.jsx) must use /api/api/chat-pdf/upload and /api/api/chat-pdf/ask.
     custom: true,
     fields: [],
   },
- 
-    {
+  {
     id: "ai-summarize", name: "AI Summarizer", icon: "🧠", category: "ai",
     description: "Get a summary of any text PDF in the language you choose.",
     endpoint: "/api/api/ai-summarize", output: "summary.txt",
@@ -698,14 +732,15 @@ export const TOOLS = [
         help: "hin+eng = Hindi + English. Hindi language data must be installed in Tesseract." },
     ],
   },
-    {
+  {
     id: "ai-draft", name: "AI Answer Draft", icon: "📝", category: "ai",
     description: "Question daalo, AI answer ka draft banayega. Edit karo aur apni handwriting mein PDF banao.",
     // Custom page: App.jsx mein /tool/ai-draft route /tool/:id se pehle hai.
+    // AiDraft.jsx fetches /api/tools/ai-draft directly (single /api, no change needed).
     custom: true,
     fields: [],
   },
-    {
+  {
     id: "ai-translate", name: "PDF Translation", icon: "🌍", category: "ai",
     description: "Translate a PDF into 30+ Indian and international languages (downloads a .txt file).",
     endpoint: "/api/api/ai-translate", output: "translated.txt",
@@ -713,6 +748,31 @@ export const TOOLS = [
       { name: "file", label: "PDF file", type: "file", accept: PDF },
       { name: "target", label: "Translate to", type: "select", default: "Hindi",
         options: TRANSLATE_OPTIONS },
+    ],
+  },
+  // ---------- Concept Visualizer ----------
+    {
+    id: "concept-visualizer", name: "Concept Visualizer", icon: "🧠", category: "ai",
+    description: "PDF ya text se AI topic aur uske branches nikal kar mind-map PDF banata hai.",
+    endpoint: "/api/tools/concept-visualizer", output: "concept_map.pdf",
+    fields: [
+      { name: "file", label: "PDF (optional, text-based)", type: "file", accept: ".pdf", optional: true },
+      { name: "text", label: "Ya seedha text paste karo", type: "textarea", optional: true,
+        placeholder: "Topic ka text yahan paste karo..." },
+      { name: "max_branches", label: "Max branches", type: "number", default: "6", optional: true },
+    ],
+  },
+  // ----------Voice to Notes ----------
+  {
+    id: "voice-to-notes", name: "Voice to Notes", icon: "🎙️", category: "ai",
+    description: "Audio file se AI transcript aur notes banata hai (PDF).",
+    endpoint: "/api/tools/voice-to-notes", output: "voice_notes.pdf",
+    fields: [
+      { name: "file", label: "Audio file (mp3/wav/m4a)", type: "file", accept: ".mp3,.wav,.m4a,.ogg,.flac,.aac" },
+      { name: "note_style", label: "Notes style", type: "select", default: "bullet",
+        options: [{ value: "bullet", label: "Bullet points" }, { value: "summary", label: "Short summary" }, { value: "transcript", label: "Full transcript only" }] },
+      { name: "language", label: "Notes language", type: "select", default: "English",
+        options: LANGUAGE_OPTIONS },
     ],
   },
 ];

@@ -477,8 +477,47 @@ async def ai_summarize(file: UploadFile = File(...), length: str = Form("medium"
     text = pdf_text(await file.read())
     style = {"short": "in 3-4 sentences", "medium": "in one clear paragraph plus 5 bullet points",
              "detailed": "section by section with key points and numbers"}.get(length, "briefly")
-    ans = ask_claude("You summarize documents accurately. Use only the document.",
-                     f"Summarize this document {style}. Write the summary in {language}.\n\n<document>\n{text}\n</document>")
+    from google import genai
+    from app.config import GEMINI_API_KEY
+    from fastapi import HTTPException
+    
+    if not GEMINI_API_KEY:
+        raise HTTPException(status_code=500, detail="GEMINI_API_KEY missing")
+    
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    import time
+    from google.genai import errors
+
+    prompt = (
+        "You summarize documents accurately. Use only the document.\n"
+        f"Summarize this document {style}. Write the summary in {language}.\n\n"
+        f"<document>\n{text}\n</document>"
+    )
+
+    ans = ""
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.8-flash",
+                contents=prompt
+            )
+            ans = response.text or ""
+            break
+        except errors.ServerError as e:
+            if getattr(e, "code", None) != 503:
+                raise HTTPException(status_code=502, detail=str(e))
+            if attempt == 2:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Gemini is temporarily overloaded. Please retry later."
+                )
+            time.sleep(2 ** (attempt + 1))
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=str(e))
+
+    if not ans.strip():
+        raise HTTPException(status_code=502, detail="Gemini returned an empty summary.")
+
     return out(ans.encode("utf-8"), "summary.txt", "text/plain; charset=utf-8")
 
 

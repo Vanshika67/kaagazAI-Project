@@ -35,7 +35,7 @@ export default function Home() {
   const anyMatch = LIST.some(matches);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-b from-indigo-950 via-slate-950 to-slate-950 text-white">
       <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-blue-600/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-32 top-40 h-96 w-96 rounded-full bg-fuchsia-600/20 blur-3xl" />
 

@@ -29,3 +29,6 @@ dist/
 # Temporary files
 backend/app/temp_files/*
 Backend/app/temp_files/*
+
+*.backup
+backend/*.pdf

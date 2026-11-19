@@ -1,5 +1,5 @@
 ﻿"""
-KaagazAI Backend â€” main entry point.
+KaagazAI Backend - main entry point.
 
 Run with:
     uvicorn app.main:app --reload
@@ -21,14 +21,18 @@ from app.routes import office_tools
 from app.routes import password_recovery
 from app.routes import label_organize
 from app.routes import resume_builder
-from app.routes.extra_tools import router as extra_router
-from app.routes.bulk_tools import router as bulk_router
+from app.routes import text_to_pdf
 from app.routes import handwriting
 from app.routes import ai_draft
+from app.routes import report_generator
+from app.routes import concept_visualizer
+from app.routes import voice_to_notes
+
+from app.routes.extra_tools import router as extra_router
+from app.routes.bulk_tools import router as bulk_router
 
 
 async def periodic_cleanup():
-    """Background task: deletes old temp files every few minutes for privacy."""
     while True:
         cleanup_old_files()
         await asyncio.sleep(FILE_RETENTION_MINUTES * 60 / 2)
@@ -48,7 +52,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS: localhost / 127.0.0.1 ke kisi bhi port se allow
 app.add_middleware(
     CORSMiddleware,
     allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
@@ -61,8 +64,6 @@ app.add_middleware(
 
 @app.exception_handler(Exception)
 async def all_errors(request: Request, exc: Exception):
-    """Har unhandled error ka traceback terminal mein print karta hai
-    aur response mein error ka naam + message bhejta hai."""
     traceback.print_exc()
     return JSONResponse(
         status_code=500,
@@ -79,10 +80,14 @@ app.include_router(office_tools.router, prefix="/api")
 app.include_router(password_recovery.router, prefix="/api")
 app.include_router(label_organize.router, prefix="/api")
 app.include_router(resume_builder.router, prefix="/api")
-app.include_router(extra_router, prefix="/api")
-app.include_router(bulk_router, prefix="/api")
+app.include_router(extra_router)
+app.include_router(bulk_router)
 app.include_router(handwriting.router, prefix="/api")
+app.include_router(text_to_pdf.router, prefix="/api")
 app.include_router(ai_draft.router, prefix="/api")
+app.include_router(report_generator.router, prefix="/api")
+app.include_router(concept_visualizer.router, prefix="/api")
+app.include_router(voice_to_notes.router, prefix="/api")
 
 
 @app.get("/")

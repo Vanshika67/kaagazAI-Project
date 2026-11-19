@@ -35,12 +35,12 @@ export default function FileDropzone({ files, onChange, multiple = false, accept
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => { e.preventDefault(); setDragging(false); addFiles(e.dataTransfer.files); }}
-        className={`cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition ${
-          dragging ? "border-indigo-500 bg-indigo-50" : "border-slate-300 bg-white hover:border-indigo-400"
+        className={`cursor-pointer rounded-xl border-2 border-dashed p-6 text-center backdrop-blur transition ${
+          dragging ? "border-sky-400 bg-sky-400/10" : "border-white/20 bg-white/5 hover:border-sky-400/60 hover:bg-white/10"
         }`}
       >
-        <p className="font-medium text-slate-700">
-          Drag & drop {multiple ? "files" : "a file"} here, or <span className="text-indigo-600">browse</span>
+        <p className="font-medium text-slate-200">
+          Drag & drop {multiple ? "files" : "a file"} here, or <span className="text-sky-400">browse</span>
         </p>
         <input
           ref={inputRef}
@@ -55,17 +55,17 @@ export default function FileDropzone({ files, onChange, multiple = false, accept
       {files.length > 0 && (
         <ul className="mt-3 space-y-2">
           {files.map((file, i) => (
-            <li key={`${file.name}-${i}`} className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
-              <span className="w-5 text-slate-400">{i + 1}</span>
+            <li key={`${file.name}-${i}`} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 backdrop-blur">
+              <span className="w-5 text-slate-500">{i + 1}</span>
               <span className="min-w-0 flex-1 truncate font-medium">{file.name}</span>
               <span className="text-slate-400">{formatSize(file.size)}</span>
               {multiple && files.length > 1 && (
                 <>
-                  <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="px-1 text-slate-500 hover:text-indigo-600 disabled:opacity-30" title="Move up">↑</button>
-                  <button type="button" onClick={() => move(i, 1)} disabled={i === files.length - 1} className="px-1 text-slate-500 hover:text-indigo-600 disabled:opacity-30" title="Move down">↓</button>
+                  <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="px-1 text-slate-400 hover:text-sky-400 disabled:opacity-30" title="Move up">↑</button>
+                  <button type="button" onClick={() => move(i, 1)} disabled={i === files.length - 1} className="px-1 text-slate-400 hover:text-sky-400 disabled:opacity-30" title="Move down">↓</button>
                 </>
               )}
-              <button type="button" onClick={() => remove(i)} className="px-1 text-slate-400 hover:text-red-600" title="Remove">✕</button>
+              <button type="button" onClick={() => remove(i)} className="px-1 text-slate-400 hover:text-red-400" title="Remove">✕</button>
             </li>
           ))}
         </ul>

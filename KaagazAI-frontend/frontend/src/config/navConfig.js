@@ -16,6 +16,7 @@ export const NAV_SECTIONS = [
       { label: "Resume - Simple", path: "/tool/resume-builder?template_style=simple" },
       { label: "Resume - Modern", path: "/tool/resume-builder?template_style=modern" },
       { label: "Handwriting Notes / Assignment Helper", path: "/handwriting" },
+      { label: "Report Generator", path: "/tool/report-generator" },
     ],
   },
   {
@@ -27,6 +28,8 @@ export const NAV_SECTIONS = [
       { label: "Chat with PDF", path: "/tool/chat-pdf" },
       { label: "Extract Data", path: "/tool/ai-extract" },
       { label: "Hindi / Scanned OCR", path: "/tool/hindi-ocr" },
+      { label: "Concept Visualizer", path: "/tool/concept-visualizer" },
+      { label: "Voice to Notes", path: "/tool/voice-to-notes" },
     ],
   },
   {
